@@ -240,8 +240,10 @@ async def test_resolve_extracted_edges_keeps_unknown_names(monkeypatch):
 async def test_resolve_extracted_edge_uses_integer_indices_for_duplicates(mock_llm_client):
     """Test that resolve_extracted_edge correctly uses integer indices for LLM duplicate detection."""
     # Mock LLM to return duplicate_facts with integer indices
+    # Candidates are numbered in fact order: 0 'User enjoys yoga', 1 'User loves swimming',
+    # 2 'User practices yoga'. The LLM identifies the two yoga facts as duplicates.
     mock_llm_client.generate_response.return_value = {
-        'duplicate_facts': [0, 1],  # LLM identifies first two related edges as duplicates
+        'duplicate_facts': [0, 2],
         'contradicted_facts': [],
     }
 
@@ -319,7 +321,7 @@ async def test_resolve_extracted_edge_uses_integer_indices_for_duplicates(mock_l
     mock_llm_client.generate_response.assert_called_once()
 
     # Verify the system correctly identified duplicates using integer indices
-    # The LLM returned [0, 1], so related_edge_0 and related_edge_1 should be marked as duplicates
+    # The LLM returned [0, 2], so related_edge_0 and related_edge_1 should be marked as duplicates
     assert len(duplicates) == 2
     assert related_edge_0 in duplicates
     assert related_edge_1 in duplicates

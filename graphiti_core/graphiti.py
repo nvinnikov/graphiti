@@ -1152,6 +1152,10 @@ class Graphiti:
                     if previous_episode_uuids is None
                     else await EpisodicNode.get_by_uuids(driver, previous_episode_uuids)
                 )
+                if previous_episode_uuids is not None:
+                    # get_by_uuids returns database order; keep the caller's order instead
+                    by_uuid = {e.uuid: e for e in previous_episodes}
+                    previous_episodes = [by_uuid[u] for u in previous_episode_uuids if u in by_uuid]
 
                 # Get or create episode
                 episode = (

@@ -696,6 +696,10 @@ async def resolve_extracted_edge(
 
     start = time()
 
+    # Number candidates in a stable order so the prompt does not depend on search order
+    related_edges = sorted(related_edges, key=lambda e: (e.fact, e.uuid))
+    existing_edges = sorted(existing_edges, key=lambda e: (e.fact, e.uuid))
+
     # Prepare context for LLM with continuous indexing
     related_edges_context = [{'idx': i, 'fact': edge.fact} for i, edge in enumerate(related_edges)]
 
